@@ -10,7 +10,7 @@ max_iter = 1000  # Number of iterations
 num_fireflies = 10  # Number of fireflies
 alpha = 0.5  # Randomness strength
 beta_0 = 1  # Attraction coefficient base
-gamma = 1  # Absorption coefficient
+gamma = 0.5  # Absorption coefficient [0,1]
 
 # Generate random positions for clients
 client_positions = np.random.rand(num_clients, 2) * area_size
