@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Adjusted parameters based on the document
+# Parameters
 num_clients = 100  # Number of clients
 num_routers = 20   # Number of routers
 coverage_radius = 200  # Radius of router coverage in units
@@ -23,21 +23,30 @@ def calculate_coverage(firefly_position):
         coverage += np.sum(distance < coverage_radius)
     return coverage
 
+#  Function to calculate connectivity
+def calculate_connectivity(router_positions):
+    connected_clients = set()
+    for cp in client_positions:
+        for rp in router_positions:
+            distance = np.sqrt(np.sum((rp - cp) ** 2))
+            if distance < coverage_radius:
+                connected_clients.add(tuple(cp))
+                break
+    return len(connected_clients)
+
 # Initialize fireflies (routers)
 fireflies = np.random.rand(num_fireflies, num_routers, 2) * area_size
-
-# Variables to keep track of the highest, lowest, and sum of fitness values
-lowest_fitness = np.inf  # Initialize to maximum possible value
-sum_fitness = 0
 
 # Firefly Algorithm
 best_solution = None
 best_fitness = -np.inf
+lowest_fitness = np.inf
+sum_fitness = 0
 
 for iter in range(max_iter):
     fitness = np.array([calculate_coverage(f) for f in fireflies])
 
-     # Update highest and lowest fitness
+    # Update highest and lowest fitness
     lowest_fitness = min(lowest_fitness, np.min(fitness))
     sum_fitness += np.sum(fitness)
 
@@ -57,13 +66,17 @@ for iter in range(max_iter):
 # Calculating the average fitness
 average_fitness = sum_fitness / (num_fireflies * max_iter)
 
+# Calculate the connectivity of the best solution
+best_connectivity = calculate_connectivity(best_solution)
+
 # Print results
 print("Highest Fitness (Maximum Clients Covered):", best_fitness)
 print("Lowest Fitness (Minimum Clients Covered):", lowest_fitness)
 print("Average Fitness (Average Clients Covered):", average_fitness)
-print("Number of Iterations:",max_iter)
+print("Connectivity of Best Solution:", best_connectivity)
+print("Number of Iterations:", max_iter)
 
-# Plotting the best solution for representing this algorithm
+# Plotting the best solution
 plt.figure(figsize=(8, 8))
 plt.scatter(client_positions[:, 0], client_positions[:, 1], color='blue', label='Clients')
 plt.scatter(best_solution[:, 0], best_solution[:, 1], color='red', marker='*', s=200, label='Routers')
