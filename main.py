@@ -34,60 +34,88 @@ def calculate_connectivity(router_positions):
                 break
     return len(connected_clients)
 
+def calculate_fitness(C, G, N, M, alpha):
+    """
+    Parameters:
+    C : Coverage
+    G : Connectivity
+    N : Clients
+    M : Routers
+    alpha : Parameter to balance the importance of coverage and connectivity (0 <= alpha <= 1).
+    """
+    fitness = alpha * (C / N) + (1 - alpha) * (G / (N + M))
+    return fitness
+
 # Initialize fireflies (routers)
 fireflies = np.random.rand(num_fireflies, num_routers, 2) * area_size
 
 # Firefly Algorithm
 best_solution = None
-best_fitness = -np.inf
-lowest_fitness = np.inf
-sum_fitness = 0
+best_coverage = -np.inf
+lowest_coverage = np.inf
+sum_coverage = 0
 lowest_connectivity=np.inf
 sum_connectivity=0
 
 for iter in range(max_iter):
     connectivity = np.array([calculate_connectivity(f) for f in fireflies])
-    fitness = np.array([calculate_coverage(f) for f in fireflies])
+    coverage = np.array([calculate_coverage(f) for f in fireflies])
 
     
     lowest_connectivity = min(lowest_connectivity, np.min(connectivity))
     sum_connectivity+=np.sum(connectivity)
-    lowest_fitness = min(lowest_fitness, np.min(fitness))
-    sum_fitness += np.sum(fitness)
+    lowest_coverage = min(lowest_coverage, np.min(coverage))
+    sum_coverage += np.sum(coverage)
 
     # Update best solution
-    if np.max(fitness) > best_fitness:
-        best_fitness = np.max(fitness)
-        best_solution = fireflies[np.argmax(fitness)]
+    if np.max(coverage) > best_coverage:
+        best_coverage = np.max(coverage)
+        best_solution = fireflies[np.argmax(coverage)]
 
     # Move fireflies
     for i in range(num_fireflies):
         for j in range(num_fireflies):
-            if fitness[i] < fitness[j]:  # Move firefly i towards j
+            if coverage[i] < coverage[j]:  # Move firefly i towards j
                 beta = beta_0 * np.exp(-gamma * np.linalg.norm(fireflies[i] - fireflies[j])**2)
                 fireflies[i] += beta * (fireflies[j] - fireflies[i]) + alpha * (np.random.rand(num_routers, 2) - 0.5)
                 fireflies[i] = np.clip(fireflies[i], 0, area_size[0])  # Keep within bounds
 
 # Calculating the average fitness
-average_fitness = sum_fitness / (num_fireflies * max_iter)
+average_coverage = sum_coverage / (num_fireflies * max_iter)
 average_connectivity = sum_connectivity/(num_fireflies*max_iter)
 
 # Calculate the connectivity of the best solution
 best_connectivity = calculate_connectivity(best_solution)
 
+# Calculate the fitness core of the best solution
+fitness_score = calculate_fitness(best_coverage, best_connectivity, num_clients, num_routers, alpha)
+
+
 # Print results
-print("Highest Fitness (Maximum Clients Covered):", best_fitness)
-print("Lowest Fitness (Minimum Clients Covered):", lowest_fitness)
-print("Average Fitness (Average Clients Covered):", average_fitness)
-print("Highest Connectivity:", best_connectivity)
+print("Maximum Clients Covered:", best_coverage)
+print("Minimum Clients Covered:", lowest_coverage)
+print("Average Clients Covered:", average_coverage)
+
+print("\nMaximum Connectivity:", best_connectivity)
 print("Lowest Connectivity:", lowest_connectivity)
 print("Average Connectivity:", average_connectivity)
-print("Number of Iterations:", max_iter)
 
-# Plotting the best solution for representation
+print("\nFitness:",fitness_score)
+print("\nNumber of Iterations:", max_iter)
+
+
+    
+# Plotting best solution
 plt.figure(figsize=(8, 8))
 plt.scatter(client_positions[:, 0], client_positions[:, 1], color='blue', label='Clients')
 plt.scatter(best_solution[:, 0], best_solution[:, 1], color='red', marker='*', s=200, label='Routers')
+
+# Showing coverage radius of each router
+'''
+for router in best_solution:
+    coverage_circle = plt.Circle((router[0], router[1]), coverage_radius, color='green', alpha=0.1, edgecolor='black')
+    plt.gca().add_artist(coverage_circle) '''
+    
 plt.title('Optimal Router Positions with Firefly Algorithm')
 plt.xlabel('X Position')
 plt.ylabel('Y Position')
