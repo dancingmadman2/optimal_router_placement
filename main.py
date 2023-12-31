@@ -6,8 +6,8 @@ num_clients = 100  # Number of clients
 num_routers = 20   # Number of routers
 coverage_radius = 200  # Radius of router coverage in units
 area_size = (2000, 2000)  # Width and Height of the area in units
-max_iter = 1000  # Number of iterations
-num_fireflies = 10  # Number of fireflies
+max_iter = 250  # Number of iterations
+num_fireflies = 20  # Number of fireflies
 alpha = 0.5  # Randomness strength
 beta_0 = 1  # Attraction coefficient base
 gamma = 0.5  # Absorption coefficient [0,1]
@@ -46,6 +46,13 @@ def calculate_fitness(C, G, N, M, alpha):
     fitness = alpha * (C / N) + (1 - alpha) * (G / (N + M))
     return fitness
 
+# Adjusting alpha value linearly to see different results
+def adjust_alpha(iteration, max_iterations):
+   
+    start_alpha = 1.0
+    end_alpha = 0.1
+    return start_alpha - (start_alpha - end_alpha) * (iteration / max_iterations)
+
 # Initialize fireflies (routers)
 fireflies = np.random.rand(num_fireflies, num_routers, 2) * area_size
 
@@ -58,6 +65,14 @@ lowest_connectivity=np.inf
 sum_connectivity=0
 
 for iter in range(max_iter):
+    '''
+    Adjust alpha linearly
+    alpha = adjust_alpha(iter, max_iter)
+    '''
+    # Adjust alpha nonlinearly
+    alpha = np.random.rand()
+    
+    
     connectivity = np.array([calculate_connectivity(f) for f in fireflies])
     coverage = np.array([calculate_coverage(f) for f in fireflies])
 
@@ -111,11 +126,11 @@ plt.scatter(client_positions[:, 0], client_positions[:, 1], color='blue', label=
 plt.scatter(best_solution[:, 0], best_solution[:, 1], color='red', marker='*', s=200, label='Routers')
 
 # Showing coverage radius of each router
-'''
+"""
 for router in best_solution:
     coverage_circle = plt.Circle((router[0], router[1]), coverage_radius, color='green', alpha=0.1, edgecolor='black')
-    plt.gca().add_artist(coverage_circle) '''
-    
+    plt.gca().add_artist(coverage_circle) 
+    """
 plt.title('Optimal Router Positions with Firefly Algorithm')
 plt.xlabel('X Position')
 plt.ylabel('Y Position')
