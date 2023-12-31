@@ -42,11 +42,16 @@ best_solution = None
 best_fitness = -np.inf
 lowest_fitness = np.inf
 sum_fitness = 0
+lowest_connectivity=np.inf
+sum_connectivity=0
 
 for iter in range(max_iter):
+    connectivity = np.array([calculate_connectivity(f) for f in fireflies])
     fitness = np.array([calculate_coverage(f) for f in fireflies])
 
-    # Update highest and lowest fitness
+    
+    lowest_connectivity = min(lowest_connectivity, np.min(connectivity))
+    sum_connectivity+=np.sum(connectivity)
     lowest_fitness = min(lowest_fitness, np.min(fitness))
     sum_fitness += np.sum(fitness)
 
@@ -65,6 +70,7 @@ for iter in range(max_iter):
 
 # Calculating the average fitness
 average_fitness = sum_fitness / (num_fireflies * max_iter)
+average_connectivity = sum_connectivity/(num_fireflies*max_iter)
 
 # Calculate the connectivity of the best solution
 best_connectivity = calculate_connectivity(best_solution)
@@ -73,10 +79,12 @@ best_connectivity = calculate_connectivity(best_solution)
 print("Highest Fitness (Maximum Clients Covered):", best_fitness)
 print("Lowest Fitness (Minimum Clients Covered):", lowest_fitness)
 print("Average Fitness (Average Clients Covered):", average_fitness)
-print("Connectivity of Best Solution:", best_connectivity)
+print("Highest Connectivity:", best_connectivity)
+print("Lowest Connectivity:", lowest_connectivity)
+print("Average Connectivity:", average_connectivity)
 print("Number of Iterations:", max_iter)
 
-# Plotting the best solution
+# Plotting the best solution for representation
 plt.figure(figsize=(8, 8))
 plt.scatter(client_positions[:, 0], client_positions[:, 1], color='blue', label='Clients')
 plt.scatter(best_solution[:, 0], best_solution[:, 1], color='red', marker='*', s=200, label='Routers')
