@@ -2,18 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Parameters
-num_clients = 100  # Number of clients
+num_clients = 150  # Number of clients
 num_routers = 20   # Number of routers
 coverage_radius = 200  # Radius of router coverage in units
 area_size = (2000, 2000)  # Width and Height of the area in units
-max_iter = 250  # Number of iterations
-num_fireflies = 20  # Number of fireflies
+max_iter = 100  # Number of iterations
+num_fireflies = 50  # Number of fireflies
 alpha = 0.5  # Randomness strength
 beta_0 = 1  # Attraction coefficient base
 gamma = 0.5  # Absorption coefficient [0,1]
 
-# Generate random positions for clients
-client_positions = np.random.rand(num_clients, 2) * area_size
+
 
 # Function to calculate coverage
 def calculate_coverage(firefly_position):
@@ -35,14 +34,14 @@ def calculate_connectivity(router_positions):
     return len(connected_clients)
 
 def calculate_fitness(C, G, N, M, alpha):
-    """
+    '''
     Parameters:
     C : Coverage
     G : Connectivity
     N : Clients
     M : Routers
     alpha : Parameter to balance the importance of coverage and connectivity (0 <= alpha <= 1).
-    """
+    '''
     fitness = alpha * (C / N) + (1 - alpha) * (G / (N + M))
     return fitness
 
@@ -61,31 +60,36 @@ best_solution = None
 best_coverage = -np.inf
 lowest_coverage = np.inf
 sum_coverage = 0
+best_connectivity = -np.inf
 lowest_connectivity=np.inf
 sum_connectivity=0
 
+coverage_solution = []
+connectivity_solution = []
+
+
+    
 for iter in range(max_iter):
-    '''
-    Adjust alpha linearly
-    alpha = adjust_alpha(iter, max_iter)
-    '''
-    # Adjust alpha nonlinearly
-    alpha = np.random.rand()
+    
+ #  Generate random positions for clients
+    client_positions = np.random.rand(num_clients, 2) * area_size
+
+    # Adjust alpha linearly for each iter
+    # alpha = adjust_alpha(iter, max_iter)
+
+    # Adjust alpha nonlinearly between [0,1]
+    # alpha = np.random.rand()
     
     
     connectivity = np.array([calculate_connectivity(f) for f in fireflies])
     coverage = np.array([calculate_coverage(f) for f in fireflies])
-
     
-    lowest_connectivity = min(lowest_connectivity, np.min(connectivity))
-    sum_connectivity+=np.sum(connectivity)
-    lowest_coverage = min(lowest_coverage, np.min(coverage))
-    sum_coverage += np.sum(coverage)
+    print("alpha: ",alpha)
+    print("coverage:" ,coverage)
+    print("connectivity:" ,connectivity)
+ 
 
-    # Update best solution
-    if np.max(coverage) > best_coverage:
-        best_coverage = np.max(coverage)
-        best_solution = fireflies[np.argmax(coverage)]
+   
 
     # Move fireflies
     for i in range(num_fireflies):
@@ -94,14 +98,34 @@ for iter in range(max_iter):
                 beta = beta_0 * np.exp(-gamma * np.linalg.norm(fireflies[i] - fireflies[j])**2)
                 fireflies[i] += beta * (fireflies[j] - fireflies[i]) + alpha * (np.random.rand(num_routers, 2) - 0.5)
                 fireflies[i] = np.clip(fireflies[i], 0, area_size[0])  # Keep within bounds
+                
+     # Update best solution
+    if np.max(coverage) > best_coverage:
+        best_coverage = np.max(coverage)
+        best_solution = fireflies[np.argmax(coverage)]
+        
+        
+       
+    if np.max(connectivity) > best_connectivity:
+        best_connectivity = np.max(connectivity)
+        best_solution = fireflies[np.argmax(connectivity)]
+        
+  
+    coverage_solution.append(np.max(coverage))
+    connectivity_solution.append(np.max(connectivity))
+   # print("solution",connectivity_solution)
 
-# Calculating the average fitness
-average_coverage = sum_coverage / (num_fireflies * max_iter)
-average_connectivity = sum_connectivity/(num_fireflies*max_iter)
 
-# Calculate the connectivity of the best solution
-best_connectivity = calculate_connectivity(best_solution)
+# Calculating the average values
+sum_coverage += np.sum(coverage_solution)
+sum_connectivity+=np.sum(connectivity_solution)
+average_coverage = sum_coverage / ( max_iter)
+average_connectivity = sum_connectivity/(max_iter)
 
+# Calculating lowest values
+lowest_connectivity = min(lowest_connectivity, np.min(connectivity_solution))
+lowest_coverage = min(lowest_coverage, np.min(coverage_solution))
+    
 # Calculate the fitness core of the best solution
 fitness_score = calculate_fitness(best_coverage, best_connectivity, num_clients, num_routers, alpha)
 
