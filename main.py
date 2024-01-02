@@ -6,13 +6,15 @@ num_clients = 100 # Number of clients
 num_routers = 20   # Number of routers
 coverage_radius = 200  # Radius of router coverage in units
 area_size = (2000, 2000)  # Width and Height of the area in units
-max_iter = 100  # Number of iterations
-num_fireflies = 15  # Number of fireflies
-alpha = 0.5  # Randomness strength
+max_iter = 1000 # Number of iterations
+num_fireflies = 10  # Number of fireflies
+alpha = 0.25  # Randomness strength
 beta_0 = 1  # Attraction coefficient base
-gamma = 0.5  # Absorption coefficient [0,1]
+gamma = 0.001  # Absorption coefficient [0,1]
 
 
+
+scaled_r= None
 
 # Function to calculate coverage
 def calculate_coverage(firefly_position):
@@ -56,41 +58,70 @@ def adjust_alpha(iteration, max_iterations):
     end_alpha = 0.1
     return start_alpha - (start_alpha - end_alpha) * (iteration / max_iterations)
 
+
+def calculate_firefly_distance(firefly1, firefly2):
+    '''
+    Calculate the Euclidean distance between the centroids of two fireflies (router configurations).
+    '''
+    # Calculate the centroid of each firefly
+    centroid1 = np.mean(firefly1, axis=0)
+    centroid2 = np.mean(firefly2, axis=0)
+
+
+    # Calculate the Euclidean distance between the two centroids
+    distance = np.linalg.norm(centroid1 - centroid2)
+
+    return distance
+
+def euclidean_distance(config1, config2):
+    return np.sqrt(np.sum((np.array(config1) - np.array(config2)) ** 2))
+
+
 def move_fireflies(fireflies, fitness, alpha, beta_0, gamma, area_size):
+
    # Move fireflies
     for i in range(num_fireflies):
         for j in range(num_fireflies):
             if fitness[i] < fitness[j]:  # Move firefly i towards j
-                r = np.linalg.norm(fireflies[i] - fireflies[j])
-                beta = beta_0 * np.exp(-gamma * r ** 2)
-                random_step = alpha * (np.random.rand(num_routers, 2) - 0.5) * area_size
-                fireflies[i] += beta * (fireflies[j] - fireflies[i]) + random_step
-                fireflies[i] = np.clip(fireflies[i], 0, area_size[0])  # Keep within bounds
               
+                r=calculate_firefly_distance(fireflies[i],fireflies[j])
+                scaled_r=r/15
+                print("r:",r)
+                #print("fireflies", fireflies[j])
+                beta = beta_0 * np.exp(-gamma * scaled_r ** 2)
+                print("beta:",beta)
+                random_vector = alpha * (np.random.rand() - 0.5)
+                fireflies[i] += beta * (fireflies[j] - fireflies[i]) + random_vector
+                fireflies[i] = np.clip(fireflies[i], 0, area_size[0])  # Keep within bounds
                 
-    return fireflies
+                # Check termination condition
+                if np.allclose(fireflies[0], fireflies[-1]):
+                    break
+                return fireflies
+            
+      
+             
 
 
 
 optimal_solution = None
 
 best_coverage = -np.inf
-
 sum_coverage = 0
 
 best_connectivity = -np.inf
-
 sum_connectivity=0
 
 best_fitness = -np.inf
-
 sum_fitness = 0
 
+final_coverage=0
+final_connectivity=0
+final_fitness=0
 
 coverage_solution = []
 connectivity_solution = []
 fitness_solution=[]
-
 
  # Initialize fireflies (routers)
 fireflies = np.random.rand(num_fireflies, num_routers, 2) * area_size
@@ -105,33 +136,40 @@ for iter in range(max_iter):
     #alpha = adjust_alpha(iter, max_iter)
 
     # Adjust alpha nonlinearly between [0,1]
-    # alpha = np.random.rand()
+    alpha = np.random.rand()
     
-    connectivity = np.array([calculate_connectivity(f) for f in fireflies])
-    coverage = np.array([calculate_coverage(f) for f in fireflies])
+    connectivity = np.array([calculate_connectivity(f) if f is not None else 0 for f in fireflies])
+    coverage = np.array([calculate_coverage(f) if f is not None else 0 for f in fireflies])
     fitness = np.array([calculate_fitness(calculate_coverage(f), calculate_connectivity(f), num_clients, num_routers, gamma) for f in fireflies])
-
-  
-
+    
+    # Handling cases where the coverage and connectivity values between all fireflies are equal
+    if np.all(coverage == coverage[0]) and np.all(connectivity == connectivity[0]):
+        break   
+    
     # Move fireflies based on fitness
     fireflies = move_fireflies(fireflies, fitness, alpha, beta_0, gamma, area_size)
     
     print("alpha:" ,alpha)
     print("coverage:" ,coverage)
     print("connectivity:" ,connectivity)
-    # print("fitness:" ,fitness)
+    print("\nfitness:" ,np.round(fitness,2))
     print("average coverage:",np.sum(coverage)/num_fireflies)
     print("iteration:", iter)
     print("\n")
     
-        # Update best solution
+    
+    final_coverage=np.max(coverage)
+    final_connectivity=np.max(connectivity)
+    final_fitness=calculate_fitness(final_coverage,final_connectivity,num_clients,num_routers,gamma)
+    
+        # Update best results
     if np.max(coverage) > best_coverage:
         best_coverage = np.max(coverage)   
     if np.max(connectivity) > best_connectivity:
         best_connectivity = np.max(connectivity)
     if np.max(fitness) > best_fitness:
         best_fitness = np.max(fitness)
-        optimal_solution = fireflies[np.argmax(fitness)]
+        
  
     '''
     # Move fireflies
@@ -164,9 +202,8 @@ average_coverage = sum_coverage /  (num_fireflies * max_iter)
 average_connectivity = sum_connectivity/(num_fireflies * max_iter)
 average_fitness= sum_fitness/(num_fireflies * max_iter)
 
-
-# Calculate the fitness core of the best solution
-#fitness_score = calculate_fitness(best_coverage, best_connectivity, num_clients, num_routers, gamma)
+# Calculating the best solution
+optimal_solution = fireflies[np.argmax(final_fitness)]
 
 
 # Print results
@@ -181,6 +218,9 @@ print("Average Connectivity:", average_connectivity)
 
 print("\nFitness:",average_fitness)
 
+print("\nFinal Coverage: ",final_coverage)
+print("Final Connectivity: ",final_connectivity)
+print("Final Fitness: ",final_fitness)
 
 print("\nNumber of Iterations:", max_iter)
 
