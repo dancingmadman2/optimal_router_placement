@@ -1,14 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import networkx as nx
+
 
 # Parameters
-num_clients = 250 # Number of clients
+num_clients = 100 # Number of clients
 num_routers = 20   # Number of routers
 coverage_radius = 200  # Radius of router coverage in units
 area_size = (2000, 2000)  # Width and Height of the area in units
 max_iter = 250 # Number of iterations
-num_fireflies = 25  # Number of fireflies
+num_fireflies = 20  # Number of fireflies
 alpha = 0.25  # Randomness strength
 beta_0 = 1  # Attraction coefficient base
 gamma = 0.0001  # Absorption coefficient [0,1]
@@ -27,27 +27,8 @@ def calculate_coverage(firefly_position):
             coverage += 1  # Count the client as covered
     return coverage
 
-#  Function to calculate connectivity
-
-def calculate_connectivity1(router_positions):
-   
-    connected_clients = set()
-    for cp in client_positions:
-        for rp in router_positions:
-            distance = np.sqrt(np.sum((rp - cp) ** 2))
-            if distance < coverage_radius:
-                connected_clients.add(tuple(cp))
-                break
-    return len(connected_clients)
-
-# EXPERIMERENJRAEK;LD'KASLDAS
-
-
 def calculate_connectivity(router_positions):
-    """
-    Calculate the number of clients that are connected to the network.
-    A client is connected if it is within range of a router that is part of an interconnected network.
-    """
+
     connected_routers = set()
     
     # First, determine which routers are interconnected to form a network
@@ -132,8 +113,6 @@ def move_fireflies(fireflies, fitness, alpha, beta_0, gamma, area_size):
                 random_vector = alpha * (np.random.rand(fireflies[i].shape[0], fireflies[i].shape[1]) - 0.5)
                 fireflies[i] += beta * (fireflies[j]-fireflies[i]) + random_vector
                 fireflies[i] = np.clip(fireflies[i], 0, area_size[0])  # Keep within bounds
-                
-             
      
                 return fireflies
              
@@ -172,7 +151,7 @@ for iter in range(max_iter):
     #alpha = adjust_alpha(iter, max_iter)
 
     # Adjust alpha nonlinearly between [0,1]
-    #alpha = np.random.rand()
+    alpha = np.random.rand()
     
 
     
@@ -213,24 +192,12 @@ for iter in range(max_iter):
     if np.max(fitness) > best_fitness:
         best_fitness = np.max(fitness)
         
- 
-    # Summing up all the values for later averaging
-    sum_coverage += np.sum(coverage)
-    sum_connectivity+=np.sum(connectivity)
-    sum_fitness+=np.sum(fitness)
-    
 
-    # Adding the highest value of each iteration to its array
+    # Adding the highest value of each iteration to its array 
     coverage_solution.append(np.max(coverage))
     connectivity_solution.append(np.max(connectivity))
     fitness_solution.append(np.max(fitness))
 
-
-# Calculating the average values
-
-average_coverage = sum_coverage /  (num_fireflies * iter)
-average_connectivity = sum_connectivity/(num_fireflies * iter)
-average_fitness= sum_fitness/(num_fireflies * iter)
 
 # Calculating the best solution
 optimal_solution = fireflies[np.argmax(final_fitness)]
@@ -240,13 +207,9 @@ optimal_solution = fireflies[np.argmax(final_fitness)]
 
 print("Maximum Clients Covered:", best_coverage)
 
-print("Average Clients Covered:", average_coverage)
+print("Maximum Connectivity:", best_connectivity)
 
-print("\nMaximum Connectivity:", best_connectivity)
-
-print("Average Connectivity:", average_connectivity)
-
-print("\nFitness:",average_fitness)
+print("Maximum Fitness:", best_fitness)
 
 print("\nFinal Coverage: ",final_coverage)
 print("Final Connectivity: ",final_connectivity)
