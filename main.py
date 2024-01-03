@@ -85,13 +85,6 @@ def calculate_firefly_distance(firefly1, firefly2):
 
     return distance
 
-# Another way of calculating r
-def euclidean_distance(config1, config2):
-    return np.sqrt(np.sum((np.array(config1) - np.array(config2)) ** 2))
-
-
-
-
 
 def move_fireflies(fireflies, fitness, alpha, beta_0, gamma, area_size):
 
@@ -175,7 +168,7 @@ for iter in range(max_iter):
     print("coverage:" ,coverage)
     print("connectivity:" ,connectivity)
     #print("\nfitness:" ,np.round(fitness,2))
-    print("average coverage:",np.sum(coverage)/num_fireflies)
+    print("average coverage per iter:",np.sum(coverage)/num_fireflies)
     print("iteration:", iter)
     print("\n")
     
