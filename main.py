@@ -1,32 +1,35 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import networkx as nx
 
 # Parameters
-num_clients = 200 # Number of clients
+num_clients = 250 # Number of clients
 num_routers = 20   # Number of routers
 coverage_radius = 200  # Radius of router coverage in units
 area_size = (2000, 2000)  # Width and Height of the area in units
 max_iter = 250 # Number of iterations
-num_fireflies = 20  # Number of fireflies
+num_fireflies = 25  # Number of fireflies
 alpha = 0.25  # Randomness strength
 beta_0 = 1  # Attraction coefficient base
-gamma = 0.0007  # Absorption coefficient [0,1]
+gamma = 0.0001  # Absorption coefficient [0,1]
 
 
 
 scaled_r= None
 
 # Function to calculate coverage
+
 def calculate_coverage(firefly_position):
     coverage = 0
     for cp in client_positions:
         distance = np.sqrt(np.sum((firefly_position - cp) ** 2, axis=1))
-        coverage += np.sum(distance < coverage_radius)
+        if np.any(distance < coverage_radius):  # Check if any router covers this client
+            coverage += 1  # Count the client as covered
     return coverage
 
 #  Function to calculate connectivity
 
-def calculate_connectivity(router_positions):
+def calculate_connectivity1(router_positions):
    
     connected_clients = set()
     for cp in client_positions:
@@ -36,6 +39,34 @@ def calculate_connectivity(router_positions):
                 connected_clients.add(tuple(cp))
                 break
     return len(connected_clients)
+
+# EXPERIMERENJRAEK;LD'KASLDAS
+
+
+def calculate_connectivity(router_positions):
+    """
+    Calculate the number of clients that are connected to the network.
+    A client is connected if it is within range of a router that is part of an interconnected network.
+    """
+    connected_routers = set()
+    
+    # First, determine which routers are interconnected to form a network
+    for i, rp_i in enumerate(router_positions):
+        for j, rp_j in enumerate(router_positions):
+            if i != j and np.linalg.norm(rp_i - rp_j) < coverage_radius:
+                connected_routers.add(tuple(rp_i))
+                connected_routers.add(tuple(rp_j))
+    
+    # Now, check client connectivity based on these connected routers
+    connected_clients = set()
+    for cp in client_positions:
+        for cr in connected_routers:
+            if np.linalg.norm(np.array(cr) - cp) < coverage_radius:
+                connected_clients.add(tuple(cp))
+                break
+
+    return len(connected_clients)
+
 
 
 # Calculating objective function
@@ -77,14 +108,7 @@ def calculate_firefly_distance(firefly1, firefly2):
 def euclidean_distance(config1, config2):
     return np.sqrt(np.sum((np.array(config1) - np.array(config2)) ** 2))
 
-def calculate_firefly_distance1(firefly1, firefly2):
-    '''
-    Calculate the Euclidean distance between two fireflies (router configurations).
-    The distance is calculated as the average of the pairwise distances between the routers of the two fireflies.
-    '''
-    distances = np.sqrt(np.sum((firefly1[:, np.newaxis, :] - firefly2[np.newaxis, :, :]) ** 2, axis=2))
-    average_distance = np.mean(distances)
-    return average_distance
+
 
 
 
@@ -99,7 +123,7 @@ def move_fireflies(fireflies, fitness, alpha, beta_0, gamma, area_size):
                 r=calculate_firefly_distance(fireflies[i],fireflies[j])
                 scaled_r=r/13
               
-                print("r:",scaled_r)
+                #print("r:",scaled_r)
                 
                 beta = beta_0 * np.exp(-gamma * scaled_r ** 2) 
                 
@@ -109,12 +133,9 @@ def move_fireflies(fireflies, fitness, alpha, beta_0, gamma, area_size):
                 fireflies[i] += beta * (fireflies[j]-fireflies[i]) + random_vector
                 fireflies[i] = np.clip(fireflies[i], 0, area_size[0])  # Keep within bounds
                 
-                # Check termination condition
-                if np.allclose(fireflies[0], fireflies[-1]):
-                    break
+             
+     
                 return fireflies
-            
-      
              
 
 
@@ -148,7 +169,7 @@ for iter in range(max_iter):
   
     
     # Adjust alpha linearly for each iter
-    alpha = adjust_alpha(iter, max_iter)
+    #alpha = adjust_alpha(iter, max_iter)
 
     # Adjust alpha nonlinearly between [0,1]
     #alpha = np.random.rand()
