@@ -33,15 +33,15 @@ The distance between any two fireflies i and j is calculated using the Euclidean
 
 $$ r_{ij} = \sqrt{\sum_{k=1}^{n}(x_{ik} - x_{jk})^2} $$
 
-where $r_ij$ is the distance between firefly i and firefly j, $x_i$ and $x_j$ are the coordinates of fireflies i and j respectively, and n is the dimensionality of the problem space.
+where $(r_ij)$ is the distance between firefly i and firefly j, $(x_i)$ and $(x_j)$ are the coordinates of fireflies i and j respectively, and $(n)$ is the dimensionality of the problem space.
 
 ### Attractiveness Calculation
-The attractiveness of a firefly is directly proportional to its light intensity, which in turn is associated with the objective function value of the solution it represents. However, the attractiveness decreases with increasing distance due to light absorption. The attractiveness $β$ of a firefly at a distance $r$ is calculated using the formula:
+The attractiveness of a firefly is directly proportional to its light intensity, which in turn is associated with the objective function value of the solution it represents. However, the attractiveness decreases with increasing distance due to light absorption. The attractiveness $(β)$ of a firefly at a distance $(r)$ is calculated using the formula:
 
 $$ \beta(r) = \beta_0 e^{-\gamma r^2} $$
 
-Here, $β_0$ is the attractiveness at $r = 0$ meaning at distance 0, and $γ$ is the light absorption coefficient. The value $β_0$ represents the base attractiveness, and the term $e^{-\gamma r^2}$
- signifies the decrease in attractiveness with increasing distance due to absorption. The parameter $γ$ controls how quickly the attractiveness decreases with distance; a higher $γ$ means faster decrease.
+Here, $(β_0)$ is the attractiveness at $(r = 0)$ meaning at distance 0, and $(γ)$ is the light absorption coefficient. The value $(β_0)$ represents the base attractiveness, and the term $(e^{-\gamma r^2})$
+ signifies the decrease in attractiveness with increasing distance due to absorption. The parameter $(γ)$ controls how quickly the attractiveness decreases with distance; a higher $(γ)$ means faster decrease.
 
 ### Firefly Movement
 The movement of a firefly i towards a more attractive firefly j is influenced by the attractiveness and is given by:
@@ -67,7 +67,7 @@ where:
 - $M$ is the total number of routers.
 - $γ$ is a parameter that balances the importance of coverage and connectivity in the solution. It ranges from 0 to 1.
 
-This objective function combines coverage and connectivity to assess the overall network performance. The term $\( \frac{C}{N} \)$ calculates the proportion of clients covered, while $\( \frac{G}{N + M} \)$ assesses the connectivity relative to the total number of network nodes (clients and routers). The parameter $\( \gamma \)$ allows for adjusting the relative importance of coverage and connectivity in the fitness evaluation.
+This objective function combines coverage and connectivity to assess the overall network performance. The term $\( \frac{C}{N} \)$ calculates the proportion of clients covered, while $\( \frac{G}{N + M} \)$ assesses the connectivity relative to the total number of network nodes (clients and routers). The parameter $(γ)$ allows for adjusting the relative importance of coverage and connectivity in the fitness evaluation.
 
 ### Interpretation in the Context of Router Placement
 In the context of the router placement problem, each firefly represents a potential solution, i.e., a configuration of router positions. The light intensity of a firefly corresponds to the quality of this configuration, measured in terms of network coverage and connectivity. The attractiveness mechanism drives the fireflies (solutions) to move towards better solutions, thereby exploring the search space for an optimal router placement configuration.
