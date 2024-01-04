@@ -42,7 +42,7 @@ The attractiveness of a firefly is directly proportional to its light intensity,
 
 $$ \beta(r) = \beta_0 e^{-\gamma r^2} $$
 
-Here, $beta_0$ is the attractiveness at r = 0 meaning at distance 0, and $ gamma $ is the light absorption coefficient. The value $beta_0$ represents the base attractiveness, and the term $e^{-\gamma r^2}$
+Here, $beta_0$ is the attractiveness at $r = 0$ meaning at distance 0, and $γ$ is the light absorption coefficient. The value $beta_0$ represents the base attractiveness, and the term $e^{-\gamma r^2}$
  signifies the decrease in attractiveness with increasing distance due to absorption. The parameter $gamma$ controls how quickly the attractiveness decreases with distance; a higher gamma means faster decrease.
 
 ### Firefly Movement
