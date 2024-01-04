@@ -33,7 +33,7 @@ The Firefly Optimization Algorithm (FA), as applied in the paper "Placement opti
 ### Distance Calculation
 The distance between any two fireflies i and j is calculated using the Euclidean distance formula. This is represented as:
 
-![Distance Calculation](https://latex.codecogs.com/png.latex?r_{ij}=\sqrt{\sum_{k=1}^{n}(x_{ik}-x_{jk})^2})
+` ![Distance Calculation](https://latex.codecogs.com/png.latex?r_{ij}=\sqrt{\sum_{k=1}^{n}(x_{ik}-x_{jk})^2}) `
 
 where \( r_{ij} \) is the distance between firefly \( i \) and firefly \( j \), \( x_{ik} \) and \( x_{jk} \) are the coordinates of fireflies \( i \) and \( j \) respectively, and \( n \) is the dimensionality of the problem space.
 
