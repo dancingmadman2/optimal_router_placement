@@ -28,8 +28,6 @@ This project implements a Firefly Optimization Algorithm for optimizing the plac
 - `calculate_fitness`: Determines the fitness of a solution based on coverage and connectivity.
 - `move_fireflies`: Updates the positions of fireflies (solutions) based on their attractiveness.
 
-The Firefly Optimization Algorithm (FA), as applied in the paper "Placement optimization of wireless mesh routers using the firefly optimization algorithm", is inspired by the flashing and communication behavior of fireflies. In this algorithm, the attractiveness between fireflies plays a crucial role. Let's explore the formulas and explanations for attractiveness and distance as presented in the paper:
-
 ### Distance Calculation
 The distance between any two fireflies i and j is calculated using the Euclidean distance formula. This is represented as:
 
@@ -50,7 +48,7 @@ The movement of a firefly i towards a more attractive firefly j is influenced by
 
 $$ x_i = x_i + \beta_0 e^{-\gamma r_{ij}^2} (x_j - x_i) + \alpha (\text{rand} - 0.5) $$
 
-Here, x_i and x_j are the positions of fireflies i and j, and alpha represents the randomness parameter. The term $\text{rand} - 0.5$
+Here, $x_i$ and $x_j$ are the positions of fireflies i and j, and $α$ represents the randomness parameter. The term $\text{rand} - 0.5$
  introduces a randomization factor to the movement, allowing the fireflies to explore the search space beyond immediate attractiveness gradients.
 
 ### Interpretation in the Context of Router Placement
