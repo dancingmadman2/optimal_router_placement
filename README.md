@@ -51,6 +51,24 @@ $$ x_i = x_i + \beta_0 e^{-\gamma r_{ij}^2} (x_j - x_i) + \alpha (\text{rand} - 
 Here, $x_i$ and $x_j$ are the positions of fireflies i and j, and $α$ represents the randomness parameter. The term $\text{rand} - 0.5$
  introduces a randomization factor to the movement, allowing the fireflies to explore the search space beyond immediate attractiveness gradients.
 
+
+Certainly! Continuing from where we left off, let's add the objective function used in the Firefly Optimization Algorithm:
+
+### Objective Function
+The objective function in the Firefly Algorithm is crucial as it determines the light intensity or brightness of each firefly, which in turn influences the attractiveness. In the context of the router placement problem, the objective function evaluates the quality of a router configuration in terms of coverage and connectivity. It is typically formulated to maximize these parameters. The objective function can be represented as follows:
+
+$$ F(X) = \gamma \times \frac{C(X)}{N} + (1 - \gamma) \times \frac{G(X)}{N + M} $$
+
+where:
+- $F$ is the fitness value or the objective function.
+- $C$ represents the coverage, i.e., the number of clients covered by the routers.
+- $G$ is the connectivity, indicating how well the routers are connected to each other.
+- $N$ is the total number of clients.
+- $M$ is the total number of routers.
+- $γ$ is a parameter that balances the importance of coverage and connectivity in the solution. It ranges from 0 to 1.
+
+This objective function combines coverage and connectivity to assess the overall network performance. The term $\( \frac{C}{N} \)$ calculates the proportion of clients covered, while $\( \frac{G}{N + M} \)$ assesses the connectivity relative to the total number of network nodes (clients and routers). The parameter $\( \gamma \)$ allows for adjusting the relative importance of coverage and connectivity in the fitness evaluation.
+
 ### Interpretation in the Context of Router Placement
 In the context of the router placement problem, each firefly represents a potential solution, i.e., a configuration of router positions. The light intensity of a firefly corresponds to the quality of this configuration, measured in terms of network coverage and connectivity. The attractiveness mechanism drives the fireflies (solutions) to move towards better solutions, thereby exploring the search space for an optimal router placement configuration.
 
