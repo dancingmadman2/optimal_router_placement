@@ -34,4 +34,8 @@ After running the simulation, the algorithm outputs:
 - Final solution for router placements.
 - A plot illustrating the optimal placement of routers and coverage.
 
+
+## Example Visual Illustration
+![Figure_100_clients](https://github.com/dancingmadman2/cmp4503/assets/88443368/297e9578-f56d-4c7c-9329-93ece0dd6d83)
+
 ---
