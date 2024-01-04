@@ -35,7 +35,7 @@ The distance between any two fireflies i and j is calculated using the Euclidean
 
 ![Distance Calculation](https://latex.codecogs.com/png.latex?r_{ij}=\sqrt{\sum_{k=1}^{n}(x_{ik}-x_{jk})^2})
 
-where \( r_{ij} \) is the distance between firefly \( i \) and firefly \( j \), \( x_{ik} \) and \( x_{jk} \) are the coordinates of fireflies \( i \) and \( j \) respectively, and \( n \) is the dimensionality of the problem space.
+where r_ij is the distance between firefly i and firefly j, x_i and x_j are the coordinates of fireflies i and j respectively, and n is the dimensionality of the problem space.
 
 ### Attractiveness Calculation
 The attractiveness of a firefly is directly proportional to its light intensity, which in turn is associated with the objective function value of the solution it represents. However, the attractiveness decreases with increasing distance due to light absorption. The attractiveness beta of a firefly at a distance r is calculated using the formula:
@@ -45,10 +45,9 @@ The attractiveness of a firefly is directly proportional to its light intensity,
 Here, beta_0 is the attractiveness at r = 0 meaning at distance 0, and gamma is the light absorption coefficient. The value beta_0 represents the base attractiveness, and the term ![Attractiveness Decay](https://latex.codecogs.com/png.latex?e^{-\gamma%20r^2}) signifies the decrease in attractiveness with increasing distance due to absorption. The parameter gamma controls how quickly the attractiveness decreases with distance; a higher gamma means faster decrease.
 
 ### Firefly Movement
-The movement of a firefly \( i \) towards a more attractive firefly \( j \) is influenced by the attractiveness and is given by:
+The movement of a firefly i towards a more attractive firefly j is influenced by the attractiveness and is given by:
 
-![Firefly Movement](https://latex.codecogs.com/png.latex?\dpi{110}\bg{transparent}x_i%20=%20x_i%20+%20\beta_0%20e^{-\gamma%20r_{ij}^2}%20(x_j%20-%20x_i)%20+%20\alpha%20(\text{rand}%20-%200.5))
-
+![Firefly Movement](https://latex.codecogs.com/png.latex?\dpi{110}\bg{white}x_i%20=%20x_i%20+%20\beta_0%20e^{-\gamma%20r_{ij}^2}%20(x_j%20-%20x_i)%20+%20\alpha%20(\text{rand}%20-%200.5))
 
 Here, x_i and x_j are the positions of fireflies i and j, and alpha represents the randomness parameter. The term ![Randomness Factor](https://latex.codecogs.com/png.latex?\text{rand}%20-%200.5) introduces a randomization factor to the movement, allowing the fireflies to explore the search space beyond immediate attractiveness gradients.
 
