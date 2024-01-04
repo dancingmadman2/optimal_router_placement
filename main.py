@@ -7,7 +7,7 @@ num_clients = 100 # Number of clients
 num_routers = 20   # Number of routers
 coverage_radius = 200  # Radius of router coverage in units
 area_size = (2000, 2000)  # Width and Height of the area in units
-max_iter = 250 # Number of iterations
+max_iter = 1000 # Number of iterations
 num_fireflies = 20  # Number of fireflies
 alpha = 0.25  # Randomness strength
 beta_0 = 1  # Attraction coefficient base
@@ -58,7 +58,7 @@ def calculate_fitness(C, G, N, M, gamma):
     G : Connectivity
     N : Clients
     M : Routers
-    gamma : Parameter to balance the importance of coverage and connectivity (0 <= alpha <= 1).
+    gamma : Parameter to balance the importance of coverage and connectivity (0 < gamma <= 1).
     '''
     fitness = gamma * (C / N) + (1 - gamma) * (G / (N + M))
     return fitness
@@ -144,7 +144,7 @@ for iter in range(max_iter):
     #alpha = adjust_alpha(iter, max_iter)
 
     # Adjust alpha nonlinearly between [0,1]
-    alpha = np.random.rand()
+    #alpha = np.random.rand()
     
 
     
