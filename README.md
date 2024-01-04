@@ -48,11 +48,8 @@ The movement of a firefly i towards a more attractive firefly j is influenced by
 
 $$ x_i = x_i + \beta_0 e^{-\gamma r_{ij}^2} (x_j - x_i) + \alpha (\text{rand} - 0.5) $$
 
-Here, $x_i$ and $x_j$ are the positions of fireflies i and j, and $α$ represents the randomness parameter. The term $(\text{rand} - 0.5)$
+Here, $(x_i)$ and $(x_j)$ are the positions of fireflies i and j, and $(α)$ represents the randomness parameter. The term $(\text{rand} - 0.5)$
  introduces a randomization factor to the movement, allowing the fireflies to explore the search space beyond immediate attractiveness gradients.
-
-
-Certainly! Continuing from where we left off, let's add the objective function used in the Firefly Optimization Algorithm:
 
 ### Objective Function
 The objective function in the Firefly Algorithm is crucial as it determines the light intensity or brightness of each firefly, which in turn influences the attractiveness. In the context of the router placement problem, the objective function evaluates the quality of a router configuration in terms of coverage and connectivity. It is typically formulated to maximize these parameters. The objective function can be represented as follows:
